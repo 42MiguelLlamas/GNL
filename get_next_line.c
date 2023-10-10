@@ -27,7 +27,7 @@ size_t	ft_strlen(char *s)
 	}
 	return (a);
 }
-
+/*
 static void	*ft_calloc(size_t count, size_t size)
 {
 	void			*b;
@@ -45,9 +45,9 @@ static void	*ft_calloc(size_t count, size_t size)
 		i--;
 	}
 	return ((void *)ptr);
-}
+}*/
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin(char  *s1, char  *s2)
 {
 	char	*str;
 	int		i;
@@ -77,7 +77,7 @@ char	*ft_strjoin(char *s1, char *s2)
 
 static int check_buffer(char *buffer)
 {
-    while (buffer)
+    while (*buffer)
     {
         if (*buffer == '\n')
             return (1);
@@ -89,25 +89,35 @@ static int check_buffer(char *buffer)
 static char *get_buffer(int fd)
 {
     char    *buffer;
-    int     i;
 
-    i = 1;
-    buffer = malloc(BUFFER_SIZE);
+
+    buffer = malloc(BUFFER_SIZE + 1);
     if (!buffer)
         return(NULL);
     if (read(fd, buffer, BUFFER_SIZE) < 0)
+	{
+		free(buffer);
         return (NULL);
+	}
+	buffer[BUFFER_SIZE] = '\0';
     return (buffer);
 }
 
 char    *get_next_line(int fd)
 {
     char    *line;
-    char    *a;
+    char    *temp;
+	char	*joined;
 
     line = get_buffer(fd);
-    a = get_buffer(fd);
-    line = ft_strjoin(line, a); 
+	while (check_buffer(line) != 1)
+	{
+		temp = get_buffer(fd);
+		joined = ft_strjoin(line, temp);
+		free((void *)temp);
+		free((void *)line);
+		line = joined;
+	}
     return (line);
 }
 //    line = ft_left(line);
@@ -115,11 +125,11 @@ char    *get_next_line(int fd)
 
 int main(void)
 {
-    int fd;
+    int		fd;
     char    *a;
 
     fd = open("prueba.txt", O_RDONLY);
     a = get_next_line(fd);
-    printf("%s\n", a);
+	printf("%s\n", a);
     close(fd);
 }
