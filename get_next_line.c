@@ -15,6 +15,19 @@
 # include <stdio.h>
  #include <fcntl.h>
 
+size_t	ft_strlen(char *s)
+{
+	size_t	a;
+
+	a = 0;
+	while (*s)
+	{
+		a++;
+		s++;
+	}
+	return (a);
+}
+
 static void	*ft_calloc(size_t count, size_t size)
 {
 	void			*b;
@@ -34,32 +47,71 @@ static void	*ft_calloc(size_t count, size_t size)
 	return ((void *)ptr);
 }
 
-static size_t ft_byte_len(int fd)
+char	*ft_strjoin(char *s1, char *s2)
 {
-    char    a;
-    size_t  count;
+	char	*str;
+	int		i;
+	int		j;
+	int		len;
 
-    count = 0;
-    while (read(fd, &a, 1) > 0 && a != '\n')
-        count++;
-    if (read(fd, &a, 1) < 0)
-        return (0);
-    return (count);
+	i = 0;
+	j = 0;
+	len = ft_strlen(s1) + ft_strlen(s2);
+	str = malloc((len + 1) * sizeof(char));
+	if (!str)
+		return (str);
+	while (s1[i])
+	{
+		str[i] = (char)s1[i];
+		i++;
+	}
+	while (s2[j])
+	{
+		str[i] = (char)s2[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+static int check_buffer(char *buffer)
+{
+    while (buffer)
+    {
+        if (*buffer == '\n')
+            return (1);
+        buffer++;
+    }
+    return (0);
+}
+
+static char *get_buffer(int fd)
+{
+    char    *buffer;
+    int     i;
+
+    i = 1;
+    buffer = malloc(BUFFER_SIZE);
+    if (!buffer)
+        return(NULL);
+    if (read(fd, buffer, BUFFER_SIZE) < 0)
+        return (NULL);
+    return (buffer);
 }
 
 char    *get_next_line(int fd)
 {
-    size_t  bytes;
-    char    *buffer;
+    char    *line;
+    char    *a;
 
-    bytes = ft_byte_len(fd);
-    if (bytes == 0)
-        return (NULL);
-    buffer = ft_calloc(bytes, sizeof(char));
-    if (!buffer)
-        return (NULL);
-    return ("a");
+    line = get_buffer(fd);
+    a = get_buffer(fd);
+    line = ft_strjoin(line, a); 
+    return (line);
 }
+//    line = ft_left(line);
+//    return(ft_final_line(line));
 
 int main(void)
 {
@@ -68,5 +120,6 @@ int main(void)
 
     fd = open("prueba.txt", O_RDONLY);
     a = get_next_line(fd);
+    printf("%s\n", a);
     close(fd);
 }
