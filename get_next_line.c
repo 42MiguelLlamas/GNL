@@ -82,6 +82,7 @@ static int check_buffer(char *buffer)
         if (*buffer == '\n')
             return (1);
         buffer++;
+		printf("%d\n", 33);
     }
     return (0);
 }
@@ -108,7 +109,7 @@ int	output_len(char *str)
 	int	len;
 	
 	len = 0;
-	while (*str != '\n')
+	while (*str != '\n' && str)
     {
         str++;
 		len++;
@@ -123,6 +124,7 @@ char	*get_output(char *str)
 	int		i;
 
 	len = output_len(str);
+	printf("%d\n", len);
 	i = 0;
 	output = malloc(len + 1);
 	while (i < len)
@@ -166,10 +168,12 @@ char	*get_left(char	*str)
 		olen++;
 		i++;
 	}
+	free (str);
 	left[i] = '\0';
 	return (left);
 
 }
+
 char    *get_next_line(int fd)
 {
     static char    *line;
@@ -183,6 +187,7 @@ char    *get_next_line(int fd)
 	{
 		line = get_buffer(fd);
 	}
+	printf("%d\n", 1);
 	while (check_buffer(line) != 1)
 	{
 		temp = get_buffer(fd);
@@ -191,8 +196,8 @@ char    *get_next_line(int fd)
 		free((void *)line);
 		line = joined;
 	}
-	line = get_left(line);
 	output = get_output(line);
+	line = get_left(line);
     return (output);
 }
 //    line = ft_left(line);
@@ -205,16 +210,16 @@ int main(void)
 
     fd = open("prueba.txt", O_RDONLY);
 	a = get_next_line(fd);
-	printf("%s", a);
+	printf("%s\n", a);
 	free((void *)a);
 	a = get_next_line(fd);
-	printf("%s", a);
+	printf("%s\n", a);
 	free((void *)a);
 	a = get_next_line(fd);
-	printf("%s", a);
+	printf("%s\n", a);
 	free((void *)a);
 	a = get_next_line(fd);
-	printf("%s", a);
+	printf("%s\n", a);
 	free((void *)a);
     close(fd);
 	return (0);
