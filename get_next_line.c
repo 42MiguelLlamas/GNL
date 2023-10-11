@@ -9,7 +9,7 @@
 /*   Updated: 2023/10/09 13:30:44 by mllamas-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include  "get_next_line.h"
+# include  "get_next_line.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -103,13 +103,86 @@ static char *get_buffer(int fd)
     return (buffer);
 }
 
+int	output_len(char *str)
+{
+	int	len;
+	
+	len = 0;
+	while (*str != '\n')
+    {
+        str++;
+		len++;
+    }
+    return (len);
+}
+
+char	*get_output(char *str)
+{
+	char	*output;
+	int		len;
+	int		i;
+
+	len = output_len(str);
+	i = 0;
+	output = malloc(len + 1);
+	while (i < len)
+	{
+		output[i] = str[i];
+		i++;
+	}
+	output[i] = '\0';
+	return (output);
+}
+
+int	left_len(char *str)
+{
+	int	len;
+	
+	len = 0;
+	while (*str != '\n')
+        str++;
+	while (*str)
+	{
+		str++;
+		len++;
+	}
+    return (len);
+}
+
+char	*get_left(char	*str)
+{
+	char	*left;
+	int		llen;
+	int		olen;
+	int		i;
+
+	i = 0;
+	llen = left_len(str);
+	olen = output_len(str);
+	left = malloc(llen + 1);
+	while (str[olen - 1])
+	{
+		left[i] = str[olen + 1];
+		olen++;
+		i++;
+	}
+	left[i] = '\0';
+	return (left);
+
+}
 char    *get_next_line(int fd)
 {
-    char    *line;
+    static char    *line;
     char    *temp;
 	char	*joined;
+	char	*output;
 
-    line = get_buffer(fd);
+	if (output)
+		free((void *) output);
+    if (!line)
+	{
+		line = get_buffer(fd);
+	}
 	while (check_buffer(line) != 1)
 	{
 		temp = get_buffer(fd);
@@ -118,7 +191,9 @@ char    *get_next_line(int fd)
 		free((void *)line);
 		line = joined;
 	}
-    return (line);
+	line = get_left(line);
+	output = get_output(line);
+    return (output);
 }
 //    line = ft_left(line);
 //    return(ft_final_line(line));
@@ -129,7 +204,18 @@ int main(void)
     char    *a;
 
     fd = open("prueba.txt", O_RDONLY);
-    a = get_next_line(fd);
-	printf("%s\n", a);
+	a = get_next_line(fd);
+	printf("%s", a);
+	free((void *)a);
+	a = get_next_line(fd);
+	printf("%s", a);
+	free((void *)a);
+	a = get_next_line(fd);
+	printf("%s", a);
+	free((void *)a);
+	a = get_next_line(fd);
+	printf("%s", a);
+	free((void *)a);
     close(fd);
+	return (0);
 }
