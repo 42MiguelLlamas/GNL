@@ -79,7 +79,7 @@ char	*get_left(char	*str)
 	left = ft_calloc(llen + 1, 1);
 	while (olen < len)
 	{
-		left[i] = str[olen];
+		left[i] = str[olen + 1];
 		i++;
 		olen++;
 	}
@@ -104,6 +104,7 @@ char	*get_next_line(int fd)
 	return (output);
 }
 
+/*
 int main(void)
 {
     int		fd;
@@ -112,7 +113,30 @@ int main(void)
     fd = open("prueba.txt", O_RDONLY);
 	a = get_next_line(fd);
 	printf("%s", a);
-	a = get_next_line(fd);
-	printf("%s", a);
+	close (fd);
 	return (0);
+}
+*/
+int main(void)
+{
+    int fd;
+    char *line;
+	int i;
+
+    fd = open("prueba.txt", O_RDONLY);
+    if (fd < 0)
+    {
+        perror("Error al abrir el archivo");
+        return 1;
+    }
+	i = 0;
+    while (i < 4)
+    {
+		line = get_next_line(fd);
+        printf("%s\n", line);
+		i++; // Liberar la memoria asignada por get_next_line
+    }
+
+    close(fd);
+    return (0);
 }
