@@ -90,22 +90,7 @@ int	output_len(char *str)
 	int	len;
 
 	len = 0;
-	while (*str != '\n' && str)
-	{
-		str++;
-		len++;
-	}
-	return (len);
-}
-
-int	left_len(char *str)
-{
-	int	len;
-
-	len = 0;
-	while (*str != '\n')
-		str++;
-	while (*str)
+	while (*str != '\n' && *str)
 	{
 		str++;
 		len++;

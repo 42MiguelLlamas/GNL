@@ -15,18 +15,15 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-
 static char	*get_buffer(int fd, char *left)
 {
 	char	*buffer;
 	char	*temp;
 	int		check;
 
-	if (!left)
-		left = ft_calloc(1,1);
 	buffer = ft_calloc(BUFFER_SIZE + 1, 1);
 	check = 1;
-	while(check > 0)
+	while (check > 0)
 	{
 		check = read(fd, buffer, BUFFER_SIZE);
 		if (check < 0)
@@ -34,12 +31,12 @@ static char	*get_buffer(int fd, char *left)
 			free(buffer);
 			return (NULL);
 		}
-		buffer[BUFFER_SIZE] = '\0';
+		buffer[check] = '\0';
 		temp = ft_strjoin(left, buffer);
 		free(left);
 		left = temp;
 		if (ft_strchr(buffer, 10))
-			break;
+			break ;
 	}
 	free(buffer);
 	return (left);
@@ -62,7 +59,6 @@ char	*get_output(char *str)
 	output[i] = '\0';
 	return (output);
 }
-
 
 char	*get_left(char	*str)
 {
@@ -88,7 +84,6 @@ char	*get_left(char	*str)
 	return (left);
 }
 
-
 char	*get_next_line(int fd)
 {
 	static char	*line;
@@ -96,6 +91,8 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
+	if (!line)
+		line = ft_calloc(1, 1);
 	line = get_buffer(fd, line);
 	if (!line)
 		return (NULL);
@@ -104,19 +101,6 @@ char	*get_next_line(int fd)
 	return (output);
 }
 
-/*
-int main(void)
-{
-    int		fd;
-    char    *a;
-
-    fd = open("prueba.txt", O_RDONLY);
-	a = get_next_line(fd);
-	printf("%s", a);
-	close (fd);
-	return (0);
-}
-*/
 int main(void)
 {
     int fd;
@@ -134,7 +118,7 @@ int main(void)
     {
 		line = get_next_line(fd);
         printf("%s\n", line);
-		i++; // Liberar la memoria asignada por get_next_line
+		i++;
     }
 
     close(fd);
