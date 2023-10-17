@@ -29,16 +29,23 @@ static char	*get_buffer(int fd, char *left)
 		if (check < 0)
 		{
 			free(buffer);
+			free(left);
+			left = NULL;
 			return (NULL);
 		}
 		buffer[check] = '\0';
 		temp = ft_strjoin(left, buffer);
-		free(left);
 		left = temp;
 		if (ft_strchr(buffer, 10))
 			break ;
 	}
 	free(buffer);
+	if (check == 0 && left[0] == '\0')
+	{
+		free(left);
+		return (NULL);
+	}
+//	printf("B-%s", left);
 	return (left);
 }
 
@@ -50,10 +57,15 @@ char	*get_output(char *str)
 
 	len = output_len(str);
 	i = 0;
-	output = malloc(len + 1);
+	output = malloc(len + 2);
 	while (i < len)
 	{
 		output[i] = str[i];
+		i++;
+	}
+	if (str[i] == '\n')
+	{
+		output[i] = '\n';
 		i++;
 	}
 	output[i] = '\0';
@@ -72,7 +84,7 @@ char	*get_left(char	*str)
 	olen = output_len(str);
 	len = ft_strlen(str);
 	llen = len - olen;
-	left = ft_calloc(llen + 1, 1);
+	left = malloc(llen + 1);
 	while (olen < len)
 	{
 		left[i] = str[olen + 1];
@@ -94,18 +106,19 @@ char	*get_next_line(int fd)
 	if (!line)
 		line = ft_calloc(1, 1);
 	line = get_buffer(fd, line);
-	if (!line)
-		return (NULL);
-	output = get_output(line);
-	line = get_left(line);
-	return (output);
+	if (line)
+	{
+		output = get_output(line);
+		line = get_left(line);
+		return (output);
+	}
+	return (NULL);
 }
-
+/*
 int main(void)
 {
     int fd;
     char *line;
-	int i;
 
     fd = open("prueba.txt", O_RDONLY);
     if (fd < 0)
@@ -113,14 +126,18 @@ int main(void)
         perror("Error al abrir el archivo");
         return 1;
     }
-	i = 0;
-    while (i < 4)
-    {
-		line = get_next_line(fd);
-        printf("%s\n", line);
-		i++;
-    }
-
+	line = get_next_line(fd);
+    printf("1%s", line);
+	line = get_next_line(fd);
+    printf("2%s", line);
     close(fd);
+    fd = open("prueba.txt", O_RDONLY);
+    if (fd < 0)
+    {
+        perror("Error al abrir el archivo");
+        return 1;
+    }
+	line = get_next_line(fd);
+    printf("1%s", line);
     return (0);
-}
+}*/

@@ -82,6 +82,7 @@ char	*ft_strjoin(char *s1, char *s2)
 		j++;
 	}
 	str[i] = '\0';
+	free(s1);
 	return (str);
 }
 
@@ -90,6 +91,8 @@ int	output_len(char *str)
 	int	len;
 
 	len = 0;
+	if (*str == '\n')
+		return (0);
 	while (*str != '\n' && *str)
 	{
 		str++;
