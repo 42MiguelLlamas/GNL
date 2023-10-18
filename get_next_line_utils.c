@@ -67,9 +67,9 @@ char	*ft_strjoin(char *s1, char *s2)
 	i = 0;
 	j = 0;
 	len = ft_strlen(s1) + ft_strlen(s2);
-	str = malloc((len + 1) * sizeof(char));
+	str = ft_calloc((len + 1) * sizeof(char), 1);
 	if (!str)
-		return (str);
+		ft_freeleft(&s1);
 	while (s1[i])
 	{
 		str[i] = (char)s1[i];

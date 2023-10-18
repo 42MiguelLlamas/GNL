@@ -29,5 +29,6 @@ size_t	ft_strlen(char *s);
 char	*ft_strjoin(char *s1, char *s2);
 int		output_len(char *str);
 int		left_len(char *str);
+char	*ft_freeleft(char **left);
 
 #endif

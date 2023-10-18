@@ -15,37 +15,42 @@
 #include <stdio.h>
 #include <fcntl.h>
 
+char	*ft_freeleft(char **left)
+{
+	free(*left);
+	*left = NULL;
+	return (NULL);
+}
+
 static char	*get_buffer(int fd, char *left)
 {
 	char	*buffer;
-	char	*temp;
 	int		check;
 
 	buffer = ft_calloc(BUFFER_SIZE + 1, 1);
+	if (!buffer)
+		return (0);
 	check = 1;
 	while (check > 0)
 	{
 		check = read(fd, buffer, BUFFER_SIZE);
+		if (check >= 0)
+		{
+			buffer[check] = '\0';
+			left = ft_strjoin(left, buffer);
+		}
 		if (check < 0)
 		{
-			free(buffer);
-			free(left);
-			left = NULL;
+			ft_freeleft(&left);
+			ft_freeleft(&buffer);
 			return (NULL);
 		}
-		buffer[check] = '\0';
-		temp = ft_strjoin(left, buffer);
-		left = temp;
+		if (check == 0 && left[0] == '\0')
+			ft_freeleft(&left);
 		if (ft_strchr(buffer, 10))
 			break ;
 	}
-	free(buffer);
-	if (check == 0 && left[0] == '\0')
-	{
-		free(left);
-		return (NULL);
-	}
-//	printf("B-%s", left);
+	ft_freeleft(&buffer);
 	return (left);
 }
 
@@ -57,7 +62,9 @@ char	*get_output(char *str)
 
 	len = output_len(str);
 	i = 0;
-	output = malloc(len + 2);
+	output = ft_calloc(len + 2, 1);
+	if(!output)
+		ft_freeleft(&str);
 	while (i < len)
 	{
 		output[i] = str[i];
@@ -84,7 +91,9 @@ char	*get_left(char	*str)
 	olen = output_len(str);
 	len = ft_strlen(str);
 	llen = len - olen;
-	left = malloc(llen + 1);
+	left = ft_calloc(llen + 1, 1);
+	if (!left)
+		ft_freeleft(&left);
 	while (olen < len)
 	{
 		left[i] = str[olen + 1];
@@ -92,7 +101,7 @@ char	*get_left(char	*str)
 		olen++;
 	}
 	left[i] = '\0';
-	free(str);
+	ft_freeleft(&str);
 	return (left);
 }
 
@@ -104,7 +113,11 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	if (!line)
+	{
 		line = ft_calloc(1, 1);
+		if (!line)
+			ft_freeleft(&line);
+	}
 	line = get_buffer(fd, line);
 	if (line)
 	{
@@ -112,6 +125,7 @@ char	*get_next_line(int fd)
 		line = get_left(line);
 		return (output);
 	}
+	free(line);
 	return (NULL);
 }
 /*
@@ -121,6 +135,7 @@ int main(void)
     char *line;
 
     fd = open("prueba.txt", O_RDONLY);
+	printf("%d\n", fd);
     if (fd < 0)
     {
         perror("Error al abrir el archivo");
